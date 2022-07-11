@@ -14,12 +14,14 @@ class MapViewController: UIViewController {
     @IBOutlet weak var locationSearchBar: UISearchBar!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var displayAddressView: UIView!
+    @IBOutlet weak var displayAddressLabel: UILabel!
     
     @IBAction func findMyLocationButtonTapped(_ sender: Any) {
         self.mapView.showsUserLocation = true
         self.mapView.setUserTrackingMode(.follow, animated: true)
     }
     
+    let defaultCoordinate = CLLocationCoordinate2D(latitude: 37.38709, longitude: 127.11615)
     let locationManager = CLLocationManager()
     let regionInMeters: Double = 10000
     
@@ -55,8 +57,9 @@ class MapViewController: UIViewController {
             mapView.showsUserLocation = true
             if let coordinate = locationManager.location?.coordinate {
                 present(at: coordinate)
-                print("시뮬레이터에선 작동 안 함. 실제 폰에선 작동할까?")
+                print("시뮬레이터에선 작동 안 함. 실제 폰에선 작동할까?2")
             }
+            present(at: defaultCoordinate) // 임시 코드
             locationManager.startUpdatingLocation()
             break
         @unknown default:
@@ -65,9 +68,26 @@ class MapViewController: UIViewController {
     }
     
     func present(at coordinate: CLLocationCoordinate2D) {
+        
+        // 맵뷰에서 해당 좌표 표시하기
         let region = MKCoordinateRegion.init(center: coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
         mapView.setRegion(region, animated: true)
+        
+        // 해당 좌표의 주소 표시하기
+        let geocoder: CLGeocoder = CLGeocoder()
+        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        let locale = Locale(identifier: "Ko-kr")
+        
+        geocoder.reverseGeocodeLocation(location, preferredLocale: locale) { (placemarks, error) in
+            if let address: [CLPlacemark] = placemarks {
+                if let country = address.last?.country, let administrativeArea = address.last?.administrativeArea, let locality = address.last?.locality, let name = address.last?.name {
+                    let displayAddress = "\(country) \(administrativeArea) \(locality) \(name)"
+                    self.displayAddressLabel.text = displayAddress
+                }
+            }
+        }
     }
+    
 }
 
 extension MapViewController: CLLocationManagerDelegate {
@@ -75,7 +95,8 @@ extension MapViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         let coordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        present(at: coordinate)
+        //present(at: coordinate) 진짜 코드
+        present(at: defaultCoordinate)  // 임시 코드
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
