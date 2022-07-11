@@ -13,8 +13,12 @@ class MapViewController: UIViewController {
     
     @IBOutlet weak var locationSearchBar: UISearchBar!
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var findMyLocationButton: UIButton!
     @IBOutlet weak var displayAddressView: UIView!
+    
+    @IBAction func findMyLocationButtonTapped(_ sender: Any) {
+        self.mapView.showsUserLocation = true
+        self.mapView.setUserTrackingMode(.follow, animated: true)
+    }
     
     let locationManager = CLLocationManager()
     let regionInMeters: Double = 10000
@@ -30,28 +34,29 @@ class MapViewController: UIViewController {
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            checkLocationAuthorization()
+            checkAuthorization()
         } else {
-            // Show an alert letting them know this is off and go turn it on.
+            
         }
     }
     
-    func checkLocationAuthorization() {
+    func checkAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
             break
         case .restricted:
-            // Your location is restricted likely due to parental controls.
+            print("Your location is restricted likely due to parental controls.")
             break
         case .denied:
-            // Your have denied this app location permisson. Go into settings to change it.
+            print("Your have denied this app location permisson. Go into settings to change it.")
             break
         case .authorizedAlways, .authorizedWhenInUse:
             mapView.showsUserLocation = true
-            guard let coordinate = locationManager.location?.coordinate else { return }
-            move(at: coordinate)
+            //mapView.setUserTrackingMode(.follow, animated: true)
             locationManager.startUpdatingLocation()
+            break
+        @unknown default:
             break
         }
     }
@@ -60,15 +65,6 @@ class MapViewController: UIViewController {
         let region = MKCoordinateRegion.init(center: coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
         mapView.setRegion(region, animated: true)
     }
-    
-    /*
-    func move(at location: CLLocation) {
-        let coordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: regionInMeters, longtitudinalMeters: regionInMeters)
-        mapView.setRegion(region, animated: true)
-    }
-     */
-
 }
 
 extension MapViewController: CLLocationManagerDelegate {
@@ -80,7 +76,19 @@ extension MapViewController: CLLocationManagerDelegate {
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        checkLocationAuthorization()
+        checkAuthorization()
     }
+    
+    /*
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
+    }
+     */
+    
+    /*
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        
+    }
+     */
 }
 

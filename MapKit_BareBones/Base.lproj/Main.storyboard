@@ -17,7 +17,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="dvk-Wu-Cyv">
-                                <rect key="frame" x="0.0" y="95" width="414" height="801"/>
+                                <rect key="frame" x="0.0" y="100" width="414" height="796"/>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="mZB-cl-Eep"/>
+                                </connections>
                             </mapView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5QM-z7-uTK">
                                 <rect key="frame" x="30" y="757.5" width="354" height="88.5"/>
@@ -37,9 +40,12 @@
                                 <rect key="frame" x="347" y="707.5" width="40" height="40"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title=""/>
+                                <connections>
+                                    <action selector="findMyLocationButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yfb-4k-Mvu"/>
+                                </connections>
                             </button>
-                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="iKo-CQ-YAM">
-                                <rect key="frame" x="0.0" y="44" width="414" height="51"/>
+                            <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="iKo-CQ-YAM">
+                                <rect key="frame" x="7" y="44" width="400" height="51"/>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
                         </subviews>
@@ -54,20 +60,19 @@
                             <constraint firstItem="5QM-z7-uTK" firstAttribute="top" secondItem="QHG-6o-fEa" secondAttribute="bottom" constant="10" id="J2q-dO-Ejn"/>
                             <constraint firstAttribute="bottom" secondItem="dvk-Wu-Cyv" secondAttribute="bottom" id="K0E-ic-Vmo"/>
                             <constraint firstItem="dvk-Wu-Cyv" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Pi6-gE-hdM"/>
-                            <constraint firstAttribute="trailing" secondItem="iKo-CQ-YAM" secondAttribute="trailing" id="Qz9-Se-D4p"/>
+                            <constraint firstAttribute="trailing" secondItem="iKo-CQ-YAM" secondAttribute="trailing" constant="7" id="Qz9-Se-D4p"/>
                             <constraint firstItem="BoN-uk-Gmj" firstAttribute="bottom" secondItem="QHG-6o-fEa" secondAttribute="bottom" id="TE6-7K-Med"/>
                             <constraint firstItem="iKo-CQ-YAM" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="ckX-hb-0NU"/>
-                            <constraint firstItem="iKo-CQ-YAM" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="dg7-6a-6iv"/>
+                            <constraint firstItem="iKo-CQ-YAM" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="7" id="dg7-6a-6iv"/>
                             <constraint firstItem="BoN-uk-Gmj" firstAttribute="trailing" secondItem="QHG-6o-fEa" secondAttribute="trailing" id="fMP-Zt-BdS"/>
                             <constraint firstItem="BoN-uk-Gmj" firstAttribute="leading" secondItem="QHG-6o-fEa" secondAttribute="leading" id="ocB-BS-PKP"/>
-                            <constraint firstItem="dvk-Wu-Cyv" firstAttribute="top" secondItem="iKo-CQ-YAM" secondAttribute="bottom" id="pZ7-o7-HLc"/>
+                            <constraint firstItem="dvk-Wu-Cyv" firstAttribute="top" secondItem="iKo-CQ-YAM" secondAttribute="bottom" constant="5" id="pZ7-o7-HLc"/>
                             <constraint firstItem="5QM-z7-uTK" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="30" id="zDe-LI-fJi"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="wLZ-Ij-JR0"/>
                     <connections>
                         <outlet property="displayAddressView" destination="5QM-z7-uTK" id="4Zx-eG-p5R"/>
-                        <outlet property="findMyLocationButton" destination="BoN-uk-Gmj" id="FoJ-QT-7hc"/>
                         <outlet property="locationSearchBar" destination="iKo-CQ-YAM" id="qP3-eN-gOL"/>
                         <outlet property="mapView" destination="dvk-Wu-Cyv" id="6Ta-MS-7Ks"/>
                     </connections>
