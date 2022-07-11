@@ -36,7 +36,7 @@ class MapViewController: UIViewController {
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             checkAuthorization()
         } else {
-            
+            self.presentAlert(title: "오류 발생", message: "위치 서비스 제공이 불가합니다.")
         }
     }
     
@@ -46,14 +46,17 @@ class MapViewController: UIViewController {
             locationManager.requestWhenInUseAuthorization()
             break
         case .restricted:
-            print("Your location is restricted likely due to parental controls.")
+            self.presentAlert(title: "위치 서비스 제한", message: "자녀 보호로 인해 위치 서비스가 제한되었을 수 있습니다.")
             break
         case .denied:
-            print("Your have denied this app location permisson. Go into settings to change it.")
+            self.presentAlert(title: "위치 권한 거부", message: "설정으로 이동하여 앱에게 위치 접근 권한을 부여해야 사용 가능합니다.")
             break
         case .authorizedAlways, .authorizedWhenInUse:
             mapView.showsUserLocation = true
-            //mapView.setUserTrackingMode(.follow, animated: true)
+            if let coordinate = locationManager.location?.coordinate {
+                present(at: coordinate)
+                print("시뮬레이터에선 작동 안 함. 실제 폰에선 작동할까?")
+            }
             locationManager.startUpdatingLocation()
             break
         @unknown default:
@@ -61,7 +64,7 @@ class MapViewController: UIViewController {
         }
     }
     
-    func move(at coordinate: CLLocationCoordinate2D) {
+    func present(at coordinate: CLLocationCoordinate2D) {
         let region = MKCoordinateRegion.init(center: coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
         mapView.setRegion(region, animated: true)
     }
@@ -70,9 +73,9 @@ class MapViewController: UIViewController {
 extension MapViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.first else { return }
+        guard let location = locations.last else { return }
         let coordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        move(at: coordinate)
+        present(at: coordinate)
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -90,5 +93,16 @@ extension MapViewController: CLLocationManagerDelegate {
         
     }
      */
+}
+
+extension MapViewController {
+    
+    func presentAlert(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "확인", style: .cancel)
+        alertController.addAction(okAction)
+        present(alertController, animated: true)
+    }
+    
 }
 
