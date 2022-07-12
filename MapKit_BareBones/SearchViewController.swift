@@ -38,15 +38,13 @@ class SearchViewController: UIViewController {
         searchTableView.dataSource = self
         searchTableView.separatorStyle = .none
     }
-    
-    // MARK: - Functions
-    
 }
 
 // MARK: - UITableViewDelegate
 
 extension SearchViewController: UITableViewDelegate {
     
+    // 셀을 눌렀을 때, 해당 항목의 좌표를 구해서 selectSearchItem 노티피케이션 전송
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedResult = searchResults[indexPath.row]
         let searchRequest = MKLocalSearch.Request(completion: selectedResult)
@@ -54,15 +52,12 @@ extension SearchViewController: UITableViewDelegate {
         
         search.start { (response, error) in
             guard error == nil else {
-                print(error?.localizedDescription)
+                print(error.debugDescription)
                 return
             }
             guard let placeMark = response?.mapItems[0].placemark else { return }
             
             NotificationCenter.default.post(name: NSNotification.Name("selectSearchItem"), object: placeMark.coordinate)
-            
-            //let mapVC = MapViewController()
-            //mapVC.searchCoordinate = placeMark.coordinate
             self.dismiss(animated: true)
         }
     }
@@ -76,16 +71,15 @@ extension SearchViewController: UITableViewDelegate {
  // MARK: - UITableViewDataSource
 
  extension SearchViewController: UITableViewDataSource {
+     // 테이블뷰 셀에 자동완성 검색 결과 표시
      
      func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
          return searchResults.count
      }
      
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-         
          let cell = tableView.dequeueReusableCell(withIdentifier: "SearchCell", for: indexPath)
          cell.textLabel?.text = searchResults[indexPath.row].title
-         
          return cell
      }
      
@@ -95,6 +89,8 @@ extension SearchViewController: UITableViewDelegate {
 
 extension SearchViewController: UISearchBarDelegate {
     
+    // searBar의 텍스트가 바뀔 때마다 searchCompleter에게 queryFragment로 넘겨줌
+    // queryFragment에 문자열을 할당하면, 해당 문자열을 기반으로 검색이 시작됨
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchCompleter.queryFragment = searchText
     }
@@ -105,6 +101,7 @@ extension SearchViewController: UISearchBarDelegate {
 
 extension SearchViewController: MKLocalSearchCompleterDelegate {
     
+    // 자동완성 완료 시 결과를 받고 테이블뷰 리로드
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         searchResults = completer.results
         self.searchTableView.reloadData()

@@ -84,11 +84,13 @@ class MapViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTappedMapView(_:)))
         self.mapView.addGestureRecognizer(tap)
         
+        // Search 뷰컨에서 검색 항목을 선택했을 때 selectSearchItem 노티피케이션을 받음
         NotificationCenter.default.addObserver(self, selector: #selector(didReceiveSearchNotification), name: NSNotification.Name("selectSearchItem"), object: nil)
     }
     
     // MARK: - Functions
     
+    // selectSearchItem 노티피케이션을 받았을 때, 전달된 좌표로 맵뷰 및 주소 업데이트
     @objc func didReceiveSearchNotification(_ notification: Notification) {
         let searchCoordinate = notification.object as! CLLocationCoordinate2D
         updateAnnotation(at: searchCoordinate)
@@ -167,12 +169,11 @@ class MapViewController: UIViewController {
         }
     }
     
-    // 받은 좌표를 맵뷰 및 주소 업데이트
+    // 받은 좌표가 맵뷰의 중심에 표시되도록 업데이트 + 주소 업데이트
     func present(at coordinate: CLLocationCoordinate2D) {
         
-        // 맵뷰에서 해당 좌표 표시하기
+        // 맵뷰에서 해당 좌표로 이동하기
         let region = MKCoordinateRegion.init(center: coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
-        print(region.center.longitude)
         mapView.setRegion(region, animated: true)
         
         // 해당 좌표의 주소 표시하기
@@ -197,13 +198,14 @@ class MapViewController: UIViewController {
 
 extension MapViewController: CLLocationManagerDelegate {
     
-    // 위치가 바뀔 때마다 맵뷰와 주소도 업데이트
+    // 위치가 바뀔 때마다 맵뷰에서 중심이 되는 위치 및 주소 업데이트
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         let coordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         present(at: coordinate)
     }
     
+    // 위치 서비스 접근 권한이 바뀔 때마다 재처리
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         checkAuthorization()
     }
@@ -218,10 +220,10 @@ extension MapViewController: CLLocationManagerDelegate {
 
 extension MapViewController: MKMapViewDelegate {
     
+    // 오버레이(경로)를 그리기 위한 렌더 요청
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         let render = MKPolylineRenderer(overlay: overlay as! MKPolyline)
         render.strokeColor = .blue
-        
         return render
     }
 }
