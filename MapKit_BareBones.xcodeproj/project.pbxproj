@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		26900B01287D153E00822275 /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26900B00287D153E00822275 /* SearchTableViewCell.swift */; };
 		26900B03287D173400822275 /* VCExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26900B02287D173400822275 /* VCExtension.swift */; };
 		26900B05287D178800822275 /* CoordinateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26900B04287D178800822275 /* CoordinateExtension.swift */; };
+		26900B09287D332400822275 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26900B08287D332400822275 /* SearchViewController.swift */; };
 		26C9BE86287BB0380006E5C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C9BE85287BB0380006E5C9 /* AppDelegate.swift */; };
 		26C9BE88287BB0380006E5C9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C9BE87287BB0380006E5C9 /* SceneDelegate.swift */; };
 		26C9BE8A287BB0380006E5C9 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C9BE89287BB0380006E5C9 /* MapViewController.swift */; };
@@ -19,9 +19,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		26900B00287D153E00822275 /* SearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		26900B02287D173400822275 /* VCExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCExtension.swift; sourceTree = "<group>"; };
 		26900B04287D178800822275 /* CoordinateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinateExtension.swift; sourceTree = "<group>"; };
+		26900B08287D332400822275 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		26C9BE82287BB0380006E5C9 /* MapKit_BareBones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapKit_BareBones.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		26C9BE85287BB0380006E5C9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		26C9BE87287BB0380006E5C9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -85,7 +85,7 @@
 				26C9BE87287BB0380006E5C9 /* SceneDelegate.swift */,
 				26900B07287D17AF00822275 /* Extension */,
 				26C9BE89287BB0380006E5C9 /* MapViewController.swift */,
-				26900B00287D153E00822275 /* SearchTableViewCell.swift */,
+				26900B08287D332400822275 /* SearchViewController.swift */,
 				26C9BE8E287BB0390006E5C9 /* Assets.xcassets */,
 				26C9BE93287BB0390006E5C9 /* Info.plist */,
 			);
@@ -164,7 +164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				26C9BE8A287BB0380006E5C9 /* MapViewController.swift in Sources */,
-				26900B01287D153E00822275 /* SearchTableViewCell.swift in Sources */,
+				26900B09287D332400822275 /* SearchViewController.swift in Sources */,
 				26900B03287D173400822275 /* VCExtension.swift in Sources */,
 				26C9BE86287BB0380006E5C9 /* AppDelegate.swift in Sources */,
 				26C9BE88287BB0380006E5C9 /* SceneDelegate.swift in Sources */,

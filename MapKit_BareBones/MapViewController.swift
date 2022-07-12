@@ -69,8 +69,7 @@ class MapViewController: UIViewController {
     let locationManager = CLLocationManager()
     let regionInMeters: Double = 1000 // latitudinalMeters 및 longitudinalMeters의 기본값
     var tappedCoordinate: CLLocationCoordinate2D? // MapView에서 탭한 위치의 좌표를 담음
-    var searchCompleter = MKLocalSearchCompleter() // 검색을 도와줌
-    var searchResults = [MKLocalSearchCompletion]() // 검색 결과를 담음
+    var searchCoordinate: CLLocationCoordinate2D? // Search 뷰컨에서 선택한 장소의 좌표를 담음
     
     // MARK: - View life cycle
     
@@ -80,18 +79,21 @@ class MapViewController: UIViewController {
         checkLocationServices()
         displayAddressView.layer.cornerRadius = 12
         
-        // searchCompleter 세팅
-        searchCompleter.delegate = self
-        searchCompleter.resultTypes = .address
-        
         self.findPathButton.isEnabled = false
         
         // mapView에서 탭 동작을 인식하면 didTappedMapView를 실행
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTappedMapView(_:)))
         self.mapView.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(didReceiveSearchNotification), name: NSNotification.Name("selectSearchItem"), object: nil)
     }
     
-    // MARK: - functions
+    // MARK: - Functions
+    
+    @objc func didReceiveSearchNotification(_ notification: Notification) {
+        let searchCoordinate = notification.object as! CLLocationCoordinate2D
+        present(at: searchCoordinate)
+    }
     
     // mapView에서 탭한 좌표를 가지고 맵뷰 및 주소 업데이트
     @objc func didTappedMapView(_ sender: UITapGestureRecognizer) {
@@ -159,6 +161,7 @@ class MapViewController: UIViewController {
         
         // 맵뷰에서 해당 좌표 표시하기
         let region = MKCoordinateRegion.init(center: coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
+        print(region.center.longitude)
         mapView.setRegion(region, animated: true)
         
         // 해당 좌표의 주소 표시하기
@@ -178,45 +181,6 @@ class MapViewController: UIViewController {
     
 }
 
-// MARK: - UISearchBarDelegate
-
-extension MapViewController: UISearchBarDelegate {
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchCompleter.queryFragment = searchText
-    }
-    
-}
-
-// MARK: - MKLocalSearchCompleterDelegate
-
-extension MapViewController: MKLocalSearchCompleterDelegate {
-    
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        searchResults = completer.results
-        // tableView 리로드
-    }
-    
-    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        print(error.localizedDescription)
-    }
-    
-}
-
-// MARK: - UITableViewDataSource
-
-extension MapViewController: UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchResults.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchCell", for: indexPath) as? SearchTableViewCell else { return UITableViewCell() }
-        return cell
-    }
-    
-}
 
 // MARK: - CLLocationManagerDelegate
 
