@@ -13,7 +13,6 @@ class MapViewController: UIViewController {
     
     // MARK: - IBOutlet & IBAction
     
-    @IBOutlet weak var locationSearchBar: UISearchBar!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var displayAddressView: UIView!
     @IBOutlet weak var displayAddressLabel: UILabel!
@@ -39,7 +38,7 @@ class MapViewController: UIViewController {
         
         // request 생성하기
         let startingLocation = MKPlacemark(coordinate: currentCoordinate)
-        let destination = MKPlacemark(coordinate: tappedCoordinate!)
+        let destination = MKPlacemark(coordinate: selectedCoordinate!)
         let request = MKDirections.Request()
         request.source = MKMapItem(placemark: startingLocation)
         request.destination = MKMapItem(placemark: destination)
@@ -68,7 +67,7 @@ class MapViewController: UIViewController {
     
     let locationManager = CLLocationManager()
     let regionInMeters: Double = 1000 // latitudinalMeters 및 longitudinalMeters의 기본값
-    var tappedCoordinate: CLLocationCoordinate2D? // MapView에서 탭한 위치의 좌표를 담음
+    var selectedCoordinate: CLLocationCoordinate2D? // MapView에서 선택된 위치의 좌표를 담음
     var searchCoordinate: CLLocationCoordinate2D? // Search 뷰컨에서 선택한 장소의 좌표를 담음
     
     // MARK: - View life cycle
@@ -92,6 +91,8 @@ class MapViewController: UIViewController {
     
     @objc func didReceiveSearchNotification(_ notification: Notification) {
         let searchCoordinate = notification.object as! CLLocationCoordinate2D
+        updateAnnotation(at: searchCoordinate)
+        updateFindPathButton(coordinate: searchCoordinate)
         present(at: searchCoordinate)
     }
     
@@ -99,25 +100,35 @@ class MapViewController: UIViewController {
     @objc func didTappedMapView(_ sender: UITapGestureRecognizer) {
         let point: CGPoint = sender.location(in: self.mapView)
         let coordinate: CLLocationCoordinate2D = self.mapView.convert(point, toCoordinateFrom: self.mapView)
-        self.tappedCoordinate = coordinate
+        updateFindPathButton(coordinate: coordinate)
+        
+        // 탭이 끝났다면 annotation 업데이트 & 맵뷰 및 주소 업데이트
+        if sender.state == .ended {
+            updateAnnotation(at: coordinate)
+            present(at: coordinate)
+        }
+    }
+    
+    // 기존의 annotation을 제거하고, 새로운 좌표에 annotation 추가
+    func updateAnnotation(at coordinate: CLLocationCoordinate2D) {
         self.mapView.removeAnnotations(self.mapView.annotations)
         
-        // 탭한 좌표와 현위치의 좌표 사이 거리가 적당하다면 - 너무 짧지 않다면 - 경로 찾기 버튼 활성화
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        self.mapView.addAnnotation(annotation)
+    }
+    
+    // 경로 찾기 버튼의 활성화 여부 결정
+    // 새로운 좌표와 현위치의 사이 거리가 적당하다면(너무 짧지 않다면) 버튼 활성화
+    func updateFindPathButton(coordinate: CLLocationCoordinate2D) {
         if let currentCoordinate = locationManager.location?.coordinate{
             switch coordinate.isEnoughDistance(from: currentCoordinate) {
             case true:
                 findPathButton.isEnabled = true
+                selectedCoordinate = coordinate
             case false:
                 findPathButton.isEnabled = false
             }
-        }
-        
-        // 탭이 끝났다면 annotation 표시 & 맵뷰 및 주소 업데이트
-        if sender.state == .ended {
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = coordinate
-            self.mapView.addAnnotation(annotation)
-            present(at: coordinate)
         }
     }
     
