@@ -30,7 +30,7 @@ class MapViewController: UIViewController {
     // 경로 찾기 버튼을 눌렀을 때, 경로 안내하기
     @IBAction func findPathButtonTapped(_ sender: Any) {
         guard let currentCoordinate = locationManager.location?.coordinate else {
-            
+            self.presentAlert(title: "오류 발생", message: "현 위치 정보를 불러올 수 없습니다.")
             return
         }
         mapView.removeOverlays(mapView.overlays)
@@ -47,11 +47,17 @@ class MapViewController: UIViewController {
         // 요청된 경로 정보 계산하고 나타내기
         let directions = MKDirections(request: request)
         directions.calculate { [unowned self] (response, error) in
-            // 에러 핸들링하기
-            guard let response = response else { return } // Show response not available in an alert
-            if let route = response.routes.first {
-                self.mapView.addOverlay(route.polyline)
-                self.mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                guard let response = response else {
+                    self.presentAlert(title: "오류 발생", message: "경로 요청에 대한 응답을 받을 수 없습니다.")
+                    return
+                }
+                if let route = response.routes.first {
+                    self.mapView.addOverlay(route.polyline)
+                    self.mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+                }
             }
         }
     }
