@@ -11,6 +11,8 @@ import CoreLocation
 
 class MapViewController: UIViewController {
     
+    // MARK: - IBOutlet & IBAction
+    
     @IBOutlet weak var locationSearchBar: UISearchBar!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var displayAddressView: UIView!
@@ -62,9 +64,15 @@ class MapViewController: UIViewController {
         }
     }
     
+    // MARK: - Properties
+    
     let locationManager = CLLocationManager()
-    let regionInMeters: Double = 1000
-    var tappedCoordinate: CLLocationCoordinate2D?
+    let regionInMeters: Double = 1000 // latitudinalMeters 및 longitudinalMeters의 기본값
+    var tappedCoordinate: CLLocationCoordinate2D? // MapView에서 탭한 위치의 좌표를 담음
+    var searchCompleter = MKLocalSearchCompleter() // 검색을 도와줌
+    var searchResults = [MKLocalSearchCompletion]() // 검색 결과를 담음
+    
+    // MARK: - View life cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,12 +80,18 @@ class MapViewController: UIViewController {
         checkLocationServices()
         displayAddressView.layer.cornerRadius = 12
         
+        // searchCompleter 세팅
+        searchCompleter.delegate = self
+        searchCompleter.resultTypes = .address
+        
         self.findPathButton.isEnabled = false
         
         // mapView에서 탭 동작을 인식하면 didTappedMapView를 실행
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTappedMapView(_:)))
         self.mapView.addGestureRecognizer(tap)
     }
+    
+    // MARK: - functions
     
     // mapView에서 탭한 좌표를 가지고 맵뷰 및 주소 업데이트
     @objc func didTappedMapView(_ sender: UITapGestureRecognizer) {
@@ -95,7 +109,8 @@ class MapViewController: UIViewController {
                 findPathButton.isEnabled = false
             }
         }
-
+        
+        // 탭이 끝났다면 annotation 표시 & 맵뷰 및 주소 업데이트
         if sender.state == .ended {
             let annotation = MKPointAnnotation()
             annotation.coordinate = coordinate
@@ -163,6 +178,48 @@ class MapViewController: UIViewController {
     
 }
 
+// MARK: - UISearchBarDelegate
+
+extension MapViewController: UISearchBarDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchCompleter.queryFragment = searchText
+    }
+    
+}
+
+// MARK: - MKLocalSearchCompleterDelegate
+
+extension MapViewController: MKLocalSearchCompleterDelegate {
+    
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        searchResults = completer.results
+        // tableView 리로드
+    }
+    
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        print(error.localizedDescription)
+    }
+    
+}
+
+// MARK: - UITableViewDataSource
+
+extension MapViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return searchResults.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchCell", for: indexPath) as? SearchTableViewCell else { return UITableViewCell() }
+        return cell
+    }
+    
+}
+
+// MARK: - CLLocationManagerDelegate
+
 extension MapViewController: CLLocationManagerDelegate {
     
     // 위치가 바뀔 때마다 맵뷰와 주소도 업데이트
@@ -182,6 +239,8 @@ extension MapViewController: CLLocationManagerDelegate {
 
 }
 
+// MARK: - MKMapViewDelegate
+
 extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -190,29 +249,4 @@ extension MapViewController: MKMapViewDelegate {
         
         return render
     }
-}
-
-// 다른 파일로 분리할 것들
-
-extension UIViewController {
-    
-    func presentAlert(title: String, message: String) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "확인", style: .cancel)
-        alertController.addAction(okAction)
-        present(alertController, animated: true)
-    }
-    
-}
-
-extension CLLocationCoordinate2D {
-    
-    // 두 좌표 간의 거리가 적당한지 - 너무 짧지 않은지 - 판단
-    func isEnoughDistance(from: CLLocationCoordinate2D) -> Bool {
-        let from = CLLocation(latitude: from.latitude, longitude: from.longitude)
-        let to = CLLocation(latitude: self.latitude, longitude: self.longitude)
-        // 거리가 100미터를 넘으면 적당(true), 100미터 미만이면 너무 짧음(false)
-        return from.distance(from: to) > 100 ? true : false
-    }
-    
 }

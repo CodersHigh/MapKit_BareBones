@@ -80,6 +80,9 @@
                             <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="iKo-CQ-YAM">
                                 <rect key="frame" x="7" y="44" width="400" height="51"/>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="AzF-Zd-SPX"/>
+                                </connections>
                             </searchBar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
