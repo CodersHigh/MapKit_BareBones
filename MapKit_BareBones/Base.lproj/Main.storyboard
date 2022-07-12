@@ -23,33 +23,54 @@
                                 </connections>
                             </mapView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5QM-z7-uTK">
-                                <rect key="frame" x="30" y="757.5" width="354" height="88.5"/>
+                                <rect key="frame" x="30" y="735.5" width="354" height="110.5"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Po1-9D-tGs">
-                                        <rect key="frame" x="0.0" y="34" width="354" height="21"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="AuO-Kb-56o">
+                                        <rect key="frame" x="0.0" y="24" width="354" height="62.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Po1-9D-tGs">
+                                                <rect key="frame" x="0.0" y="0.0" width="354" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zt4-TM-Ez2">
+                                                <rect key="frame" x="147" y="32.5" width="60" height="30"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="zt4-TM-Ez2" secondAttribute="height" multiplier="2:1" id="P0k-RM-lsw"/>
+                                                </constraints>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled" title="Go"/>
+                                                <connections>
+                                                    <action selector="findPathButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lzp-U6-2hF"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="Po1-9D-tGs" firstAttribute="leading" secondItem="AuO-Kb-56o" secondAttribute="leading" id="CQn-Zb-Omm"/>
+                                            <constraint firstAttribute="trailing" secondItem="Po1-9D-tGs" secondAttribute="trailing" id="WIe-9T-vvg"/>
+                                        </constraints>
+                                    </stackView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstItem="Po1-9D-tGs" firstAttribute="leading" secondItem="5QM-z7-uTK" secondAttribute="leading" id="8sf-VQ-tHG"/>
-                                    <constraint firstItem="Po1-9D-tGs" firstAttribute="centerX" secondItem="5QM-z7-uTK" secondAttribute="centerX" id="GLp-oz-2yQ"/>
-                                    <constraint firstAttribute="trailing" secondItem="Po1-9D-tGs" secondAttribute="trailing" id="TqH-br-CUu"/>
-                                    <constraint firstItem="Po1-9D-tGs" firstAttribute="centerY" secondItem="5QM-z7-uTK" secondAttribute="centerY" id="p1w-Gb-1gf"/>
-                                    <constraint firstAttribute="width" secondItem="5QM-z7-uTK" secondAttribute="height" multiplier="4:1" id="yAI-3G-oOB"/>
+                                    <constraint firstItem="AuO-Kb-56o" firstAttribute="centerX" secondItem="5QM-z7-uTK" secondAttribute="centerX" id="CQK-wU-OZV"/>
+                                    <constraint firstAttribute="trailing" secondItem="AuO-Kb-56o" secondAttribute="trailing" id="Ifg-i6-m61"/>
+                                    <constraint firstItem="AuO-Kb-56o" firstAttribute="leading" secondItem="5QM-z7-uTK" secondAttribute="leading" id="PcK-e3-ixJ"/>
+                                    <constraint firstItem="zt4-TM-Ez2" firstAttribute="height" secondItem="5QM-z7-uTK" secondAttribute="height" multiplier="0.27" id="VYJ-io-tBv"/>
+                                    <constraint firstItem="AuO-Kb-56o" firstAttribute="centerY" secondItem="5QM-z7-uTK" secondAttribute="centerY" id="llY-68-g7m"/>
+                                    <constraint firstAttribute="width" secondItem="5QM-z7-uTK" secondAttribute="height" multiplier="3.2:1" id="yAI-3G-oOB"/>
                                 </constraints>
                             </view>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MyLocationIcon" translatesAutoresizingMaskIntoConstraints="NO" id="QHG-6o-fEa">
-                                <rect key="frame" x="347" y="707.5" width="40" height="40"/>
+                                <rect key="frame" x="347" y="685.5" width="40" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="QHG-6o-fEa" secondAttribute="height" multiplier="1:1" id="555-UY-UfI"/>
                                     <constraint firstAttribute="width" constant="40" id="TG2-6X-j1v"/>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BoN-uk-Gmj">
-                                <rect key="frame" x="347" y="707.5" width="40" height="40"/>
+                                <rect key="frame" x="347" y="685.5" width="40" height="40"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title=""/>
                                 <connections>
@@ -86,6 +107,7 @@
                     <connections>
                         <outlet property="displayAddressLabel" destination="Po1-9D-tGs" id="fA0-ba-z2Z"/>
                         <outlet property="displayAddressView" destination="5QM-z7-uTK" id="4Zx-eG-p5R"/>
+                        <outlet property="findPathButton" destination="zt4-TM-Ez2" id="Nm3-QB-axF"/>
                         <outlet property="locationSearchBar" destination="iKo-CQ-YAM" id="qP3-eN-gOL"/>
                         <outlet property="mapView" destination="dvk-Wu-Cyv" id="6Ta-MS-7Ks"/>
                     </connections>

@@ -15,14 +15,20 @@ class MapViewController: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var displayAddressView: UIView!
     @IBOutlet weak var displayAddressLabel: UILabel!
+    @IBOutlet weak var findPathButton: UIButton!
     
-    // 내 위치 버튼 눌렀을 때,
+    // 내 위치 버튼 눌렀을 때, 내 위치로 돌아가기
     @IBAction func findMyLocationButtonTapped(_ sender: Any) {
         self.mapView.showsUserLocation = true
         self.mapView.setUserTrackingMode(.follow, animated: true)
         if let coordinate = locationManager.location?.coordinate {
             present(at: coordinate)
         }
+        self.findPathButton.isEnabled = false
+    }
+    
+    // 경로 찾기 버튼을 눌렀을 때, 경로 안내하기
+    @IBAction func findPathButtonTapped(_ sender: Any) {
     }
     
     let locationManager = CLLocationManager()
@@ -34,6 +40,8 @@ class MapViewController: UIViewController {
         checkLocationServices()
         displayAddressView.layer.cornerRadius = 12
         
+        self.findPathButton.isEnabled = false
+        
         // mapView에서 탭 동작을 인식하면 didTappedMapView를 실행
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTappedMapView(_:)))
         self.mapView.addGestureRecognizer(tap)
@@ -44,6 +52,16 @@ class MapViewController: UIViewController {
         let point: CGPoint = sender.location(in: self.mapView)
         let coordinate: CLLocationCoordinate2D = self.mapView.convert(point, toCoordinateFrom: self.mapView)
         self.mapView.removeAnnotations(self.mapView.annotations)
+        
+        // 탭한 좌표와 현위치의 좌표 사이 거리가 적당하다면 - 너무 짧지 않다면 - 경로 찾기 버튼 활성화
+        if let currentCoordinate = locationManager.location?.coordinate{
+            switch coordinate.isEnoughDistance(from: currentCoordinate) {
+            case true:
+                findPathButton.isEnabled = true
+            case false:
+                findPathButton.isEnabled = false
+            }
+        }
 
         if sender.state == .ended {
             let annotation = MKPointAnnotation()
@@ -118,7 +136,7 @@ extension MapViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         let coordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        present(at: coordinate) 
+        present(at: coordinate)
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -142,3 +160,14 @@ extension MapViewController {
     
 }
 
+extension CLLocationCoordinate2D {
+    
+    // 두 좌표 간의 거리가 적당한지 - 너무 짧지 않은지 - 판단
+    func isEnoughDistance(from: CLLocationCoordinate2D) -> Bool {
+        let from = CLLocation(latitude: from.latitude, longitude: from.longitude)
+        let to = CLLocation(latitude: self.latitude, longitude: self.longitude)
+        // 거리가 100미터를 넘으면 적당(true), 100미터 미만이면 너무 짧음(false)
+        return from.distance(from: to) > 100 ? true : false
+    }
+    
+}
