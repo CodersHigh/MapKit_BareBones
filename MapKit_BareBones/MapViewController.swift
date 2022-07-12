@@ -29,10 +29,36 @@ class MapViewController: UIViewController {
     
     // 경로 찾기 버튼을 눌렀을 때, 경로 안내하기
     @IBAction func findPathButtonTapped(_ sender: Any) {
+        guard let currentCoordinate = locationManager.location?.coordinate else {
+            
+            return
+        }
+        mapView.removeOverlays(mapView.overlays)
+        
+        // request 생성하기
+        let startingLocation = MKPlacemark(coordinate: currentCoordinate)
+        let destination = MKPlacemark(coordinate: tappedCoordinate!)
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: startingLocation)
+        request.destination = MKMapItem(placemark: destination)
+        request.transportType = .automobile
+        request.requestsAlternateRoutes = false
+        
+        // 요청된 경로 정보 계산하고 나타내기
+        let directions = MKDirections(request: request)
+        directions.calculate { [unowned self] (response, error) in
+            // 에러 핸들링하기
+            guard let response = response else { return } // Show response not available in an alert
+            if let route = response.routes.first {
+                self.mapView.addOverlay(route.polyline)
+                self.mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+            }
+        }
     }
     
     let locationManager = CLLocationManager()
     let regionInMeters: Double = 1000
+    var tappedCoordinate: CLLocationCoordinate2D?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +77,7 @@ class MapViewController: UIViewController {
     @objc func didTappedMapView(_ sender: UITapGestureRecognizer) {
         let point: CGPoint = sender.location(in: self.mapView)
         let coordinate: CLLocationCoordinate2D = self.mapView.convert(point, toCoordinateFrom: self.mapView)
+        self.tappedCoordinate = coordinate
         self.mapView.removeAnnotations(self.mapView.annotations)
         
         // 탭한 좌표와 현위치의 좌표 사이 거리가 적당하다면 - 너무 짧지 않다면 - 경로 찾기 버튼 활성화
@@ -149,7 +176,19 @@ extension MapViewController: CLLocationManagerDelegate {
 
 }
 
-extension MapViewController {
+extension MapViewController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let render = MKPolylineRenderer(overlay: overlay as! MKPolyline)
+        render.strokeColor = .blue
+        
+        return render
+    }
+}
+
+// 다른 파일로 분리할 것들
+
+extension UIViewController {
     
     func presentAlert(title: String, message: String) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
