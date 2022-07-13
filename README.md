@@ -37,11 +37,11 @@ MapKit은 앱 내에서 **지도를 구현하고, 위치 세부 정보를 표시
 CoreLocation은 **기기의 지리적 위치 및 방향에 대한 정보**를 얻을 수 있는 프레임워크입니다.
 CoreLocation의 위치 서비스를 사용하려면 위치 정보 접근 권한이 필요하므로, 사용자게에 접근 권한을 요청하는 메시지를 먼저 표시하게 됩니다.  
 <details>
-   <summary>CoreLocation을 활용하면 이런 기능을 제공받을 수 있습니다.</summary>
-       
-   - 사용자에게 위치 정보 접근 권한을 요청합니다. (위치 서비스를 사용하려면 권한이 필수!)
-   - 사용자의 현재 위치 및 현위치에서의 크거나 작은 변화 추적
-   - 사용자가 별개의 관심 영역에 들어오거나 나갈 때 위치 이벤트 생성
+    <summary>CoreLocation을 활용하면 이런 기능을 제공받을 수 있습니다.</summary>
+   
+    - 사용자에게 위치 정보 접근 권한을 요청 (위치 서비스를 사용하려면 권한이 필수!)
+    - 사용자의 현재 위치 및 현위치에서의 크거나 작은 변화 추적
+    - 사용자가 별개의 관심 영역에 들어오거나 나갈 때 위치 이벤트 생성
         
 </details>
 <br/>
@@ -57,11 +57,10 @@ CoreLocation의 위치 서비스를 사용하려면 위치 정보 접근 권한�
 - 현위치에서 선택 및 검색한 위치까지의 경로 안내하기 
 <br/>
 
+**얻은 좌표로 이동하여 주석 및 해당 위치의 주소 표시하기**
 ```Swift
-// 얻은 좌표로 이동하여 주석 및 해당 위치의 주소 표시하기 
-
+// 얻은 좌표로 이동하기 & 해당 위치 주소 표시하기
 func present(at coordinate: CLLocationCoordinate2D) {
-    // 얻은 좌표로 이동하기 & 해당 위치 주소 표시하기
         
     // 맵뷰에서 해당 좌표로 이동하기
     let region = MKCoordinateRegion.init(center: coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
@@ -95,9 +94,8 @@ func updateAnnotation(at coordinate: CLLocationCoordinate2D) {
 <br/>
 <br/>
 
+**경로 찾기 버튼 활성화 여부 결정하기 (새로운 좌표와 현위치 사이의 거리 판단하기)**
 ```Swift
-// 경로 찾기 버튼 활성화 여부 결정하기
-
 // 새로운 좌표와 현위치의 사이 거리가 적당하다면(너무 짧지 않다면) 버튼 활성화
 func updateFindPathButton(coordinate: CLLocationCoordinate2D) {
     if let currentCoordinate = locationManager.location?.coordinate{
@@ -112,8 +110,8 @@ func updateFindPathButton(coordinate: CLLocationCoordinate2D) {
 }
 ```
 ```Swift
+// isEnoughDistance 함수를 통해 두 좌표 간의 거리가 적당한지 - 너무 짧지 않은지 - 판단
 extension CLLocationCoordinate2D { 
-    // isEnoughDistance 함수를 통해 두 좌표 간의 거리가 적당한지 - 너무 짧지 않은지 - 판단
     func isEnoughDistance(from: CLLocationCoordinate2D) -> Bool {
         let from = CLLocation(latitude: from.latitude, longitude: from.longitude)
         let to = CLLocation(latitude: self.latitude, longitude: self.longitude)
@@ -126,6 +124,7 @@ extension CLLocationCoordinate2D {
 <br/>
 <br/>
 
+**위치 서비스 권한 부여 상태에 따른 처리 (권한 요청하기, 현위치 표시하기 등)**
 ```Swift
 // CoreLocation 위치 서비스 가동 전
 
@@ -177,9 +176,8 @@ func checkAuthorization() {
 <br/>
 <br/>
 
+**사용자의 현위치 추적 및 실시간 업데이트**
 ```Swift
-// 사용자의 현위치 추적 및 실시간 업데이트
-
 func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     guard let location = locations.last else { return }
     let coordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
@@ -190,9 +188,8 @@ func locationManager(_ manager: CLLocationManager, didUpdateLocations locations:
 <br/>
 <br/>
 
+**지도에서 선택한 위치의 좌표 불러오기**
 ```Swift
-// 지도에서 선택한 위치의 좌표 불러오기
-
 // 뷰가 로드될 때 mapView에 Tap 제스처를 등록
 override func viewDidLoad() { 
     // 탭했을 때 didTappedMapView를 수행하게 됨
@@ -217,30 +214,29 @@ override func viewDidLoad() {
 <br/>
 <br/>
 
+**장소 검색 자동완성 구현하기**
 ```Swift
-// 장소 검색 자동완성 구현하기
-
 var searchCompleter = MKLocalSearchCompleter() // 검색을 도와줌
 var searchResults = [MKLocalSearchCompletion]() // 검색 결과를 담음
 
+// searBar의 텍스트가 바뀔 때마다 searchCompleter에게 queryFragment로 넘겨줌
+// queryFragment에 문자열을 할당하면, 해당 문자열을 기반으로 검색이 시작됨
 extension SearchViewController: UISearchBarDelegate {
-    // searBar의 텍스트가 바뀔 때마다 searchCompleter에게 queryFragment로 넘겨줌
-    // queryFragment에 문자열을 할당하면, 해당 문자열을 기반으로 검색이 시작됨
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchCompleter.queryFragment = searchText
     }
 }
 
+// 자동완성 완료 시 결과를 받고 테이블뷰 리로드
 extension SearchViewController: MKLocalSearchCompleterDelegate {
-    // 자동완성 완료 시 결과를 받고 테이블뷰 리로드
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         searchResults = completer.results
         self.searchTableView.reloadData()
     }
 }
 
+// 테이블뷰 셀에 자동완성 검색 결과 표시
 extension SearchViewController: UITableViewDataSource {
-    // 테이블뷰 셀에 자동완성 검색 결과 표시
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return searchResults.count
     }
@@ -252,7 +248,6 @@ extension SearchViewController: UITableViewDataSource {
 }
 
 // 선택한 검색 항목의 좌표를 노티피케이션으로 보내기
-
 extension SearchViewController: UITableViewDelegate {
     // 셀을 눌렀을 때, 해당 항목의 좌표를 구해서 selectSearchItem 노티피케이션 전송
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -295,9 +290,8 @@ override func viewDidLoad() {
 <br/>
 <br/>
 
+**현위치에서 선택 및 검색한 위치까지의 경로 안내하기**
 ```Swift
-// 현위치에서 선택 및 검색한 위치까지의 경로 안내하기
-
 @IBAction func findPathButtonTapped(_ sender: Any) {
     guard let currentCoordinate = locationManager.location?.coordinate else {
         self.presentAlert(title: "오류 발생", message: "현 위치 정보를 불러올 수 없습니다.")
