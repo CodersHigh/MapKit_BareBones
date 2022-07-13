@@ -102,10 +102,10 @@ class MapViewController: UIViewController {
     @objc func didTappedMapView(_ sender: UITapGestureRecognizer) {
         let point: CGPoint = sender.location(in: self.mapView)
         let coordinate: CLLocationCoordinate2D = self.mapView.convert(point, toCoordinateFrom: self.mapView)
-        updateFindPathButton(coordinate: coordinate)
         
         // 탭이 끝났다면 annotation 업데이트 & 맵뷰 및 주소 업데이트
         if sender.state == .ended {
+            updateFindPathButton(coordinate: coordinate)
             updateAnnotation(at: coordinate)
             present(at: coordinate)
         }
